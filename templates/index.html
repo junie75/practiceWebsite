@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home page</title>
+    </head>
+    <body>
+        <h1>Home Page</h1>
+        <!--Testing out for loops using jinja-->
+        {% for x in range(10) %}
+            {% if x % 2 == 1 %}
+            <!--variables from python can be passed using double brackets-->
+            <p>{{x}}</p>
+            {% endif %}
+        {% endfor %}
+        
+        <!--loops through list that is passed-->
+        {% for x in content %}
+            <p>{{x}}</p>
+        {% endfor %}
+    </body>
+</html>
