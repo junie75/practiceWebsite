@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/<name>")
 def home(name):
-    return render_template("index.html", content=["tim","joe","bill"])
+    return render_template("index.html", content=["tim","joe","bill"]) #sends list to webpage when template is rendered
 
 #use of a f string to format a string simply
 #name is taken from whatever is passed to the function
