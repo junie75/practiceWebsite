@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, request
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ def home():
 #use of a f string to format a string simply
 #name is taken from whatever is passed to the function
 @app.route("/<name>")
-def user(name):
+def person(name):
     return f"Hello {name}!"
 
 #if admin tab clicked, or /admin written in the url
@@ -18,8 +18,17 @@ def user(name):
 def admin():
     return redirect(url_for("user", name="Admin!"))
 
+@app.route("/login", methods=["POST","GET"])
+def login():
+    if request.method == "POST": #if user types a name in the box, we recieve what is POSTED
+        user = request.form["nm"] #we recieve what is in the input box named "nm"
+        return redirect(url_for("user", usr = user)) #sends to user function with the user's name as a variable
+    else: #if there is no name submitted, we are just GETting the webpage
+        return render_template("login.html")
 
-
+@app.route("/<usr>")
+def user(usr):
+    return f"<h1>{usr}</h1>"
 
 
 
