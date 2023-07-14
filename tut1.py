@@ -1,6 +1,9 @@
-from flask import Flask, redirect, url_for, render_template, request
+from flask import Flask, redirect, url_for, render_template, request, session
+from datetime import timedelta  #used to set up max time session can last on
 
 app = Flask(__name__)
+app.secret_key = "heytheret"  #secret key to encrypt session data
+app.permanent_session_lifetime = timedelta(days=5)  #stores permanent session data for 5 days
 
 @app.route("/")
 def home():
@@ -21,14 +24,27 @@ def admin():
 @app.route("/login", methods=["POST","GET"])
 def login():
     if request.method == "POST": #if user types a name in the box, we recieve what is POSTED
+        session.permanent = True   #turns session into permament session
         user = request.form["nm"] #we recieve what is in the input box named "nm"
-        return redirect(url_for("user", usr = user)) #sends to user function with the user's name as a variable
+        session["user"] = user  #session uses dictinary key, setting the user key in the session to the user object 
+        return redirect(url_for("user")) #sends to user function with the user's name as a variable
     else: #if there is no name submitted, we are just GETting the webpage
-        return render_template("login.html")
+        if "user" in session:
+            return redirect(url_for("user")) #if user is already logged in, send to user page
+        return render_template("login.html")  #else send to login page
 
-@app.route("/<usr>") #user sent from login method
-def user(usr):
-    return f"<h1>{usr}</h1>"
+@app.route("/user") #user sent from login method
+def user():
+    if "user" in session:  #checks if user is logged in first
+        user = session["user"]
+        return f"<h1>{user}</h1>"
+    else:
+        return redirect(url_for("login"))
+    
+@app.route("/logout")
+def logout():
+    session.pop("user", None) #removes user from the session 
+    return redirect(url_for("login"))
 
 
 
