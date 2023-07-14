@@ -26,7 +26,7 @@ def login():
     else: #if there is no name submitted, we are just GETting the webpage
         return render_template("login.html")
 
-@app.route("/<usr>")
+@app.route("/<usr>") #user sent from login method
 def user(usr):
     return f"<h1>{usr}</h1>"
 
