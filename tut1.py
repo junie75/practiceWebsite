@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request, session
+from flask import Flask, redirect, url_for, render_template, request, session, flash
 from datetime import timedelta  #used to set up max time session can last on
 
 app = Flask(__name__)
@@ -27,9 +27,11 @@ def login():
         session.permanent = True   #turns session into permament session
         user = request.form["nm"] #we recieve what is in the input box named "nm"
         session["user"] = user  #session uses dictinary key, setting the user key in the session to the user object 
+        flash("Login successful.")
         return redirect(url_for("user")) #sends to user function with the user's name as a variable
     else: #if there is no name submitted, we are just GETting the webpage
         if "user" in session:
+            flash("Already logged in.")
             return redirect(url_for("user")) #if user is already logged in, send to user page
         return render_template("login.html")  #else send to login page
 
@@ -37,12 +39,16 @@ def login():
 def user():
     if "user" in session:  #checks if user is logged in first
         user = session["user"]
-        return f"<h1>{user}</h1>"
+        return render_template("user.html", user=user)
     else:
+        flash("You are not logged in.")
         return redirect(url_for("login"))
     
 @app.route("/logout")
 def logout():
+    if "user" in session:  #checks if user is logged in first
+        user = session["user"]
+        flash(f"You have been logged out, {user}", "info") #sends message to login page for user confirmation only if user was logged in   
     session.pop("user", None) #removes user from the session 
     return redirect(url_for("login"))
 
